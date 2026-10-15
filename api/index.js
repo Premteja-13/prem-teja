@@ -1,6 +1,9 @@
 const { app } = require('../server/server.js');
 
 module.exports = (req, res) => {
-  // Pass requests smoothly to Express
+  // If Vercel strips /api from req.url, add it back so Express routes match
+  if (!req.url.startsWith('/api')) {
+    req.url = '/api' + req.url;
+  }
   return app(req, res);
 };
