@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoticeSense AI — Campus Notice Intelligence & Verification</title>
+  <meta name="description" content="AI document intelligence platform that understands college notices, extracts deadlines, verifies facts against source evidence, and answers student questions reliably.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <path d="m9 15 2 2 4-4"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">NoticeSense <span class="ai-badge">AI</span></div>
+          <div class="brand-tagline">Every Notice Understood. Every Deadline Remembered.</div>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="tab-analyze" role="tab" aria-selected="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          Analyze Notice
+        </button>
+        <button class="nav-tab" data-tab="tab-saved" role="tab" aria-selected="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          Saved Notices <span class="badge-counter" id="saved-count">0</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-compare" role="tab" aria-selected="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+          Compare Notices
+        </button>
+        <button class="nav-tab" data-tab="tab-benchmark" role="tab" aria-selected="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          Benchmark Suite
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <div class="readiness-indicator" id="status-pill" title="System Diagnostic Status">
+          <span class="status-dot"></span>
+          <span class="status-label">Checking System...</span>
+        </div>
+        <button class="icon-btn" id="btn-open-settings" title="System Configuration & Diagnostics" aria-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner -->
+  <div id="app-alert" class="app-alert hidden" role="alert">
+    <span class="alert-icon"></span>
+    <span class="alert-text"></span>
+    <button class="alert-close" aria-label="Close message">&times;</button>
+  </div>
+
+  <main class="main-content">
+    <!-- ============================================== -->
+    <!-- TAB 1: NOTICE ANALYSIS WORKSPACE -->
+    <!-- ============================================== -->
+    <section id="tab-analyze" class="tab-panel active">
+      <!-- Hero Banner for Hackathon Showcase -->
+      <div class="hero-strip">
+        <div class="hero-content">
+          <div class="hero-pill">
+            <span class="sparkle">✨</span> Trustworthy AI Document Intelligence
+          </div>
+          <h1>Transform Lengthy Campus Notices into Verified, Actionable Insights</h1>
+          <p>Extract deadlines, check eligibility, verify facts against source text, and create actionable checklists with zero hallucination.</p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-verified-rate">100%</div>
+            <div class="stat-label">Source Evidence Match</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-notices-count">0</div>
+            <div class="stat-label">Notices Processed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-pending-tasks">0</div>
+            <div class="stat-label">Action Items Active</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Deadlines & Active Tasks Dashboard Widget -->
+      <div id="upcoming-dashboard-card" class="upcoming-dashboard-card hidden">
+        <div class="upcoming-header">
+          <div class="upcoming-header-left">
+            <div class="upcoming-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div>
+              <h3>Active Deadlines & Action Items</h3>
+              <p>Real-time tracked tasks extracted from saved campus notices.</p>
+            </div>
+          </div>
+          <span class="upcoming-counter-badge" id="upcoming-tasks-badge">0 Active</span>
+        </div>
+        <div class="upcoming-items-grid" id="upcoming-items-grid">
+          <!-- Populated dynamically from saved notices -->
+        </div>
+      </div>
+
+      <!-- Quick Benchmark Loaders -->
+      <div class="sample-picker-bar">
+        <span class="picker-label">Quick-Load College Notices:</span>
+        <div class="sample-chips" id="sample-chips">
+          <!-- Dynamically populated from sampleNotices.js -->
+        </div>
+      </div>
+
+      <!-- Analysis Input Card -->
+      <div class="analysis-workspace-card">
+        <div class="input-card-header">
+          <div class="input-header-left">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <h2>Notice Document Input</h2>
+          </div>
+          <div class="input-header-actions">
+            <input type="file" id="notice-file-input" class="hidden" accept=".pdf,image/png,image/jpeg,image/webp">
+            <button type="button" class="btn-ghost btn-sm" id="btn-upload-file">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Upload PDF / Image
+            </button>
+            <button type="button" class="btn-ghost btn-sm" id="btn-paste-clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+              Paste Clipboard
+            </button>
+            <button type="button" class="btn-ghost btn-sm" id="btn-clear-input">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <form id="notice-form" class="notice-form">
+          <div class="form-group">
+            <label for="notice-title">Notice Title or Subject (Optional)</label>
+            <input type="text" id="notice-title" class="form-input" placeholder="e.g. Merit-Cum-Means National Scholarship Circular 2026-27">
+          </div>
+
+          <!-- File Upload Attachment Preview -->
+          <div id="file-attachment-preview" class="file-attachment-preview hidden">
+            <div class="attachment-left">
+              <div class="attachment-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              </div>
+              <div class="attachment-info">
+                <div class="attachment-name" id="attachment-name">notice.pdf</div>
+                <div class="attachment-meta" id="attachment-meta">Attached for Gemini Vision & OCR Extraction</div>
+              </div>
+            </div>
+            <button type="button" class="btn-ghost btn-sm" id="btn-remove-attachment" title="Remove attached file">&times; Remove</button>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="notice-text">Notice Content <span class="required">*</span></label>
+              <div class="text-metrics">
+                <span id="char-counter">0</span> characters &bull; <span id="word-counter">0</span> words
+              </div>
+            </div>
+            <textarea id="notice-text" class="form-textarea" rows="9" placeholder="Paste the full official circular, email, or announcement here... NoticeSense AI will parse dates, eligibility, fees, documents, and verify every single fact against original excerpts." required></textarea>
+          </div>
+
+          <div class="form-footer">
+            <div class="trust-guarantee-note">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span><strong>Trust Guarantee:</strong> AI is constrained to cite verbatim text and marks unverified details clearly.</span>
+            </div>
+            <button type="submit" class="btn-primary" id="btn-analyze">
+              <span class="btn-spinner hidden" id="analyze-spinner"></span>
+              <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"></path><line x1="14" y1="7" x2="17" y2="10"></line><path d="m14 14 3-3"></path><path d="m9 19 3-3"></path></svg>
+              <span class="btn-text">Analyze Notice with Gemini</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Loading Progress Card -->
+        <div id="loading-card" class="loading-card hidden">
+          <div class="loading-indicator-row">
+            <div class="pulse-ring"></div>
+            <div class="loading-details">
+              <h3 id="loading-step-title">Extracting Notice Intelligence...</h3>
+              <p id="loading-step-desc">Gemini is parsing structured deadlines, eligibility conditions, fees, and instructions.</p>
+            </div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-fill" id="analysis-progress-bar" style="width: 25%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- ANALYSIS RESULTS SECTION (Rendered dynamically) -->
+      <!-- ============================================== -->
+      <div id="results-container" class="results-container hidden">
+        <!-- Results Header Banner -->
+        <div class="results-header-card">
+          <div class="results-title-group">
+            <div class="results-badges">
+              <span class="category-pill" id="res-category">Academic</span>
+              <span class="confidence-pill" id="res-confidence">High Confidence</span>
+              <span class="date-badge" id="res-date">Analyzed Just Now</span>
+            </div>
+            <h2 id="res-title" class="results-title">Notice Analysis Overview</h2>
+            <p id="res-summary" class="results-summary-text"></p>
+          </div>
+
+          <!-- Trust & Verification Scorecard -->
+          <div class="trust-scorecard">
+            <div class="scorecard-top">
+              <div class="scorecard-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                Verification Score
+              </div>
+              <div class="score-percent" id="score-percentage">100%</div>
+            </div>
+            <div class="score-bar-bg">
+              <div class="score-bar-fill" id="score-bar-fill" style="width: 100%;"></div>
+            </div>
+            <div class="score-breakdown" id="score-breakdown">
+              <span class="badge-supported" id="score-supported-count">0 Supported</span>
+              <span class="badge-review" id="score-review-count">0 Review</span>
+              <span class="badge-conflict" id="score-conflict-count">0 Conflicts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ambiguities & Missing Info Alert (Differentiating Feature) -->
+        <div id="res-alerts-container" class="res-alerts-container"></div>
+
+        <!-- Deadlines Timeline Section -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-title-wrap">
+              <div class="section-icon icon-deadlines">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div>
+                <h3>Deadlines & Key Dates Timeline</h3>
+                <p>Preserves verbatim expressions with verified source context.</p>
+              </div>
+            </div>
+            <span class="section-count" id="deadlines-count">0 dates</span>
+          </div>
+          <div class="timeline-container" id="timeline-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Key Information Grid -->
+        <div class="info-grid">
+          <!-- Eligibility Card -->
+          <div class="info-card">
+            <div class="info-card-header">
+              <div class="info-icon icon-eligibility">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+              </div>
+              <h4>Eligibility Criteria</h4>
+            </div>
+            <div class="info-card-body" id="eligibility-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Fees and Financial Amounts Card -->
+          <div class="info-card">
+            <div class="info-card-header">
+              <div class="info-icon icon-fees">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <h4>Fees & Payments</h4>
+            </div>
+            <div class="info-card-body" id="fees-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Required Documents Card -->
+          <div class="info-card">
+            <div class="info-card-header">
+              <div class="info-icon icon-docs">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+              </div>
+              <h4>Required Documents</h4>
+            </div>
+            <div class="info-card-body" id="documents-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Contact & Submission Office -->
+          <div class="info-card">
+            <div class="info-card-header">
+              <div class="info-icon icon-contact">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <h4>Submission & Contact Office</h4>
+            </div>
+            <div class="info-card-body" id="contact-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Step-by-Step Instructions -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-title-wrap">
+              <div class="section-icon icon-steps">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              </div>
+              <div>
+                <h3>Step-by-Step Procedure</h3>
+                <p>Sequential student actions parsed from official instructions.</p>
+              </div>
+            </div>
+          </div>
+          <div class="steps-container" id="steps-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Action Checklist Card -->
+        <div class="section-card" id="checklist-section">
+          <div class="section-card-header">
+            <div class="section-title-wrap">
+              <div class="section-icon icon-checklist">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+              </div>
+              <div>
+                <h3>Student Action Checklist</h3>
+                <p>Track your personal progress toward completing notice requirements.</p>
+              </div>
+            </div>
+            <div class="task-progress-status" id="task-progress-badge">0 / 0 completed</div>
+          </div>
+          <div class="checklist-container" id="tasks-checklist">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- GROUNDED "ASK THE NOTICE" Q&A SECTION -->
+        <!-- ============================================== -->
+        <div class="section-card qa-card">
+          <div class="section-card-header">
+            <div class="section-title-wrap">
+              <div class="section-icon icon-qa">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              </div>
+              <div>
+                <h3>Ask the Notice — Grounded QA</h3>
+                <p>Ask any question. NoticeSense AI strictly verifies answers from the text and says when details are unstated.</p>
+              </div>
+            </div>
+            <span class="qa-badge-strict">Grounded in Source Text</span>
+          </div>
+
+          <div class="qa-body">
+            <!-- Suggested Quick Questions -->
+            <div class="suggested-questions-row">
+              <span class="suggested-label">Suggested:</span>
+              <div class="suggested-chips" id="suggested-chips">
+                <button type="button" class="question-chip" data-q="What is the final date and time for submission?">What is the final deadline?</button>
+                <button type="button" class="question-chip" data-q="Which documents are mandatory to attach?">Which documents are required?</button>
+                <button type="button" class="question-chip" data-q="Who is eligible to apply for this?">Who is eligible?</button>
+                <button type="button" class="question-chip" data-q="Is there any registration or application fee?">Is there any fee?</button>
+                <button type="button" class="question-chip" data-q="Can I submit after the deadline with fine?">Can I submit late?</button>
+                <button type="button" class="question-chip" data-q="Where is the application form link located?">Where is the form link?</button>
+              </div>
+            </div>
+
+            <!-- Question Form -->
+            <form id="qa-form" class="qa-form">
+              <div class="qa-input-wrapper">
+                <input type="text" id="qa-question-input" class="qa-input" placeholder="Type a specific question about this notice (e.g. 'Is there an income limit for applicants?')..." required>
+                <button type="submit" class="btn-primary qa-submit-btn" id="btn-qa-submit">
+                  <span class="btn-spinner hidden" id="qa-spinner"></span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  <span>Ask</span>
+                </button>
+              </div>
+            </form>
+
+            <!-- QA Output Display -->
+            <div id="qa-results-stream" class="qa-stream"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: SAVED NOTICES & TASKS -->
+    <!-- ============================================== -->
+    <section id="tab-saved" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Saved Campus Notices</h2>
+          <p>View previous analyses and manage your active deadline checklist items.</p>
+        </div>
+        <button type="button" class="btn-ghost" id="btn-refresh-saved">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          Refresh
+        </button>
+      </div>
+
+      <div class="saved-notices-grid" id="saved-notices-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: NOTICE COMPARISON TOOL -->
+    <!-- ============================================== -->
+    <section id="tab-compare" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Notice Comparison & Contradiction Intelligence</h2>
+          <p>Compare two notices side-by-side to detect changed deadlines, altered fees, or policy discrepancies.</p>
+        </div>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="compare-card-title">
+            <span class="badge-a">Notice A (Original / Older)</span>
+          </div>
+          <input type="text" id="compare-title-a" class="form-input mb-2" placeholder="Notice A Title">
+          <textarea id="compare-text-a" class="form-textarea" rows="10" placeholder="Paste Notice A text here..."></textarea>
+        </div>
+
+        <div class="compare-card">
+          <div class="compare-card-title">
+            <span class="badge-b">Notice B (Updated / Circular)</span>
+          </div>
+          <input type="text" id="compare-title-b" class="form-input mb-2" placeholder="Notice B Title">
+          <textarea id="compare-text-b" class="form-textarea" rows="10" placeholder="Paste Notice B text here..."></textarea>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <button type="button" class="btn-primary" id="btn-run-compare">
+          <span class="btn-spinner hidden" id="compare-spinner"></span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+          Compare Notices with Gemini
+        </button>
+      </div>
+
+      <div id="compare-results" class="compare-results hidden mt-4">
+        <!-- Dynamically rendered -->
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 4: BENCHMARK & EVALUATION TEST SUITE -->
+    <!-- ============================================== -->
+    <section id="tab-benchmark" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Evaluation & Test Benchmark Suite</h2>
+          <p>Five pre-configured realistic test cases demonstrating factual accuracy, evidence verification, and negative-constraint handling.</p>
+        </div>
+      </div>
+
+      <div class="benchmark-suite-card">
+        <div class="benchmark-table-responsive">
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th>Test Case</th>
+                <th>Notice Type</th>
+                <th>Critical Stress Test</th>
+                <th>Expected AI Behavior</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Test 1</strong></td>
+                <td>Merit Scholarship</td>
+                <td>Clear cutoff date (25th Oct 2026, 5 PM) & zero fee</td>
+                <td>Extract exact date, normalize ISO date, verify ₹0 fee and mandatory documents</td>
+                <td><button class="btn-sm btn-ghost load-bench-btn" data-id="sample-1">Load & Test</button></td>
+              </tr>
+              <tr>
+                <td><strong>Test 2</strong></td>
+                <td>Library Circular</td>
+                <td>No deadline stated anywhere in notice</td>
+                <td>Deadlines array empty [], missing_information lists lack of submission timeline</td>
+                <td><button class="btn-sm btn-ghost load-bench-btn" data-id="sample-2">Load & Test</button></td>
+              </tr>
+              <tr>
+                <td><strong>Test 3</strong></td>
+                <td>Robotics Hackathon</td>
+                <td>Multiple dates: 28 Oct deadline vs 14-15 Nov event</td>
+                <td>Distinguishes abstract cutoff from main event date; does not confuse event with deadline</td>
+                <td><button class="btn-sm btn-ghost load-bench-btn" data-id="sample-3">Load & Test</button></td>
+              </tr>
+              <tr>
+                <td><strong>Test 4</strong></td>
+                <td>Exam Fee Notice</td>
+                <td>Tiered fee structure + condonation attendance criteria</td>
+                <td>Captures regular vs late fee, 75% attendance threshold, photo submission task</td>
+                <td><button class="btn-sm btn-ghost load-bench-btn" data-id="sample-4">Load & Test</button></td>
+              </tr>
+              <tr>
+                <td><strong>Test 5</strong></td>
+                <td>Hostel Maintenance</td>
+                <td>Contradictory fees (₹1,500 vs ₹1,800) and missing date</td>
+                <td>Flags ambiguities explicitly in warning card; refuses to guess single fee</td>
+                <td><button class="btn-sm btn-ghost load-bench-btn" data-id="sample-5">Load & Test</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODALS -->
+  <!-- ============================================== -->
+
+  <!-- Source Evidence Inspector Modal -->
+  <div id="evidence-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-evidence-title">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <span class="badge-supported" id="modal-status-badge">Supported by notice</span>
+          <h3 id="modal-evidence-title">Verified Source Passage</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-modal" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="evidence-highlight-card">
+          <div class="evidence-quote-label">Exact Excerpt Cited by AI:</div>
+          <blockquote class="modal-quote" id="modal-quote-text"></blockquote>
+        </div>
+        <div class="evidence-verification-meta">
+          <div class="meta-item">
+            <span class="meta-label">Verification Result:</span>
+            <span class="meta-value" id="modal-meta-result">Exact Verbatim Match</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Verification Notes:</span>
+            <span class="meta-value" id="modal-meta-notes"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings & Readiness Diagnostics Modal -->
+  <div id="settings-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>System Configuration & Diagnostics</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-settings">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="readiness-table">
+          <div class="diag-row">
+            <span class="diag-name">Google Gemini AI Engine</span>
+            <span class="diag-val" id="diag-gemini">Checking...</span>
+          </div>
+          <div class="diag-row">
+            <span class="diag-name">Model Selected</span>
+            <span class="diag-val" id="diag-model">gemini-1.5-flash</span>
+          </div>
+          <div class="diag-row">
+            <span class="diag-name">Persistence Storage Mode</span>
+            <span class="diag-val" id="diag-storage">Local JSON Store</span>
+          </div>
+          <div class="diag-row">
+            <span class="diag-name">Supabase PostgreSQL</span>
+            <span class="diag-val" id="diag-supabase">Optional (Not configured)</span>
+          </div>
+          <div class="diag-row">
+            <span class="diag-name">Node.js Runtime</span>
+            <span class="diag-val" id="diag-node">v20.x</span>
+          </div>
+        </div>
+
+        <div class="api-key-setup-box">
+          <h4>How to configure your Gemini API Key:</h4>
+          <p>For security, API keys are stored on the server in <code>.env</code> and never exposed in browser code:</p>
+          <ol class="setup-steps">
+            <li>Obtain a free key from <a href="https://aistudio.google.com/" target="_blank" rel="noopener">Google AI Studio</a>.</li>
+            <li>Open the project root file <code>.env</code>.</li>
+            <li>Add your key: <code>GEMINI_API_KEY=your_key_here</code>.</li>
+            <li>Save the file. The server automatically reads the key for all analyses.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <span>NoticeSense AI &bull; Built for College Hackathon</span>
+      <span class="footer-separator">&bull;</span>
+      <span>Core Principle: <em>Trustworthy AI over confident guessing</em></span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/sampleNotices.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
