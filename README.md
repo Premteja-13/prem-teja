@@ -220,4 +220,4 @@ npm test
    - Ask: *"What is the deadline?"* &rarr; Shows exact answer with cited proof.
    - Ask an unstated question: *"What is the portal URL?"* &rarr; NoticeSense responds: *"This information is not stated in the supplied notice."*
 5. **Show Ambiguity Detection (Sample 5)**: Load contradictory notice &rarr; Show the yellow warning card flagging conflicting ₹1,500 vs ₹1,800 fees!
-6. **Show Checklist**: Mark action items as complete in the personal student tracker.
+6. **Show Checklist**: Mark action items as complete in the personal student tracker. 
