@@ -5,6 +5,26 @@ const geminiService = require('../services/geminiService');
 const storageService = require('../services/storageService');
 
 /**
+ * GET /api (or root of API router)
+ * API Directory and Status
+ */
+router.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    app: 'NoticeSense AI API',
+    endpoints: {
+      health: '/api/health',
+      analyze: '/api/analyze',
+      analyze_file: '/api/analyze-file',
+      ask: '/api/ask',
+      compare: '/api/compare',
+      notices: '/api/notices',
+      upcoming_tasks: '/api/tasks/upcoming'
+    }
+  });
+});
+
+/**
  * GET /api/health
  * System diagnostics and readiness status (Safe - never exposes secrets)
  */
@@ -21,6 +41,19 @@ router.get('/health', async (req, res) => {
       supabase_configured: config.hasSupabase,
       node_version: process.version
     }
+  });
+});
+
+/**
+ * GET /api/analyze
+ * Status / helper for notice analysis endpoint
+ */
+router.get('/analyze', (req, res) => {
+  res.json({
+    success: true,
+    message: 'NoticeSense AI Notice Analysis API is active. Send a POST request with { text: "..." } to analyze notice content.',
+    expected_method: 'POST',
+    fields: ['title (optional)', 'text (required, minimum 15 chars)', 'save (optional, boolean)']
   });
 });
 
@@ -288,4 +321,18 @@ router.get('/tasks/upcoming', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/upcoming
+ * Convenience alias for upcoming tasks
+ */
+router.get('/upcoming', async (req, res) => {
+  try {
+    const tasks = await storageService.getUpcomingTasks();
+    res.json({ success: true, tasks });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
+

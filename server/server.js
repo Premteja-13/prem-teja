@@ -20,8 +20,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
 
-// API Routes
+// API Routes (mounted at /api for standard routing and root for serverless rewrites)
 app.use('/api', apiRoutes);
+app.use(apiRoutes);
 
 // Fallback for client-side single-page app
 app.use((req, res, next) => {
@@ -46,13 +47,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = config.port;
-const server = app.listen(PORT, () => {
-  console.log(`===============================================`);
-  console.log(`🚀 NoticeSense AI Platform running on http://localhost:${PORT}`);
-  console.log(`🤖 Gemini API Key: ${config.hasGeminiKey ? 'Configured ✅' : 'Not set (add to .env) ⚠️'}`);
-  console.log(`💾 Storage: ${config.hasSupabase ? 'Supabase PostgreSQL ✅' : 'Local JSON Store (fallback) ✅'}`);
-  console.log(`===============================================`);
-});
+let server = null;
+if (require.main === module) {
+  const PORT = config.port;
+  server = app.listen(PORT, () => {
+    console.log(`===============================================`);
+    console.log(`🚀 NoticeSense AI Platform running on http://localhost:${PORT}`);
+    console.log(`🤖 Gemini API Key: ${config.hasGeminiKey ? 'Configured ✅' : 'Not set (add to .env) ⚠️'}`);
+    console.log(`💾 Storage: ${config.hasSupabase ? 'Supabase PostgreSQL ✅' : 'Local JSON Store (fallback) ✅'}`);
+    console.log(`===============================================`);
+  });
+}
 
-module.exports = { app, server };
+module.exports = app;
+module.exports.app = app;
+module.exports.server = server;
+

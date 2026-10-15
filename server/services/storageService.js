@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const crypto = require('crypto');
 const uuidv4 = () => crypto.randomUUID();
 const { createClient } = require('@supabase/supabase-js');
@@ -19,32 +20,74 @@ if (config.hasSupabase) {
 }
 
 // Local JSON file storage fallback
-const DATA_DIR = path.join(__dirname, '..', '..', 'data');
-const DATA_FILE = path.join(DATA_DIR, 'notices.json');
+// In serverless environments (e.g. Vercel / AWS Lambda), the root filesystem is read-only.
+// We safely direct the local store to os.tmpdir() when running in serverless.
+let memoryStore = { notices: [], tasks: [] };
+try {
+  const seed = require('../../data/notices.json');
+  if (seed && Array.isArray(seed.notices)) {
+    memoryStore = seed;
+  }
+} catch (_) {}
+
+
+function getDataPaths() {
+  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT);
+  if (isServerless) {
+    const tmpDir = path.join(os.tmpdir(), 'noticesense-data');
+    return { dir: tmpDir, file: path.join(tmpDir, 'notices.json') };
+  }
+
+  const localDir = path.join(__dirname, '..', '..', 'data');
+  return { dir: localDir, file: path.join(localDir, 'notices.json') };
+}
 
 function ensureLocalStore() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ notices: [], tasks: [] }, null, 2), 'utf-8');
+  const { dir, file } = getDataPaths();
+  try {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    if (!fs.existsSync(file)) {
+      const seedFile = path.join(__dirname, '..', '..', 'data', 'notices.json');
+      let initialData = JSON.stringify({ notices: [], tasks: [] }, null, 2);
+      if (fs.existsSync(seedFile)) {
+        try {
+          initialData = fs.readFileSync(seedFile, 'utf-8');
+        } catch (_) {}
+      }
+      fs.writeFileSync(file, initialData, 'utf-8');
+    }
+  } catch (err) {
+    console.warn('[Storage] Warning ensuring store directory/file:', err.message);
   }
 }
 
 function readLocalStore() {
   ensureLocalStore();
+  const { file } = getDataPaths();
   try {
-    const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-    return JSON.parse(raw);
+    if (fs.existsSync(file)) {
+      const raw = fs.readFileSync(file, 'utf-8');
+      const parsed = JSON.parse(raw);
+      memoryStore = parsed;
+      return parsed;
+    }
   } catch (err) {
     console.error('[Storage] Error reading local JSON store:', err);
-    return { notices: [], tasks: [] };
   }
+  return memoryStore;
 }
 
 function writeLocalStore(data) {
+  memoryStore = data;
   ensureLocalStore();
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  const { file } = getDataPaths();
+  try {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('[Storage] Error writing local JSON store:', err);
+  }
 }
 
 /**
