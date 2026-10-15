@@ -4,6 +4,18 @@
     {
       "source": "/api/:match*",
       "destination": "/api/index.js"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/notices",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/upcoming",
+      "destination": "/api/index.js"
     }
   ]
 }
